@@ -5,10 +5,10 @@ api_key = '填这里'
 api_secret = '填这里'
 
 #注册码
-validationcode = '填这里'
+validationcode = ''
 
 # 交易对
-coin = ['cet','eth']
+coin = ['cet','bch']
 # 每次下单仓位比
 per_amount = 0.6
 # 所选择交易对价格精度（小数点后几位数）
@@ -20,7 +20,7 @@ baseprice = 0
 f = 0
 
 #amount1为固定下单数量（交易对前面那个币的数量），如果设置固定下单，那百分比下单则无效
-amount1 = 0
+amount1 = 10567
 
 # 疯狂模式！！！！
 # 是否启用盘口无差价时吃单模式（有亏损）,0不启用，1启用
