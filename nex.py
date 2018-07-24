@@ -127,8 +127,8 @@ def getbalance():
         'authorization': signature
     }
     req = requests.request(method='GET',headers=header, url=url)
-    print("request details: --------:")
-    print(req.text)
+    # print("request details: --------:")
+    # print(req.text)
     try:
         data = req.json()['data']
 
