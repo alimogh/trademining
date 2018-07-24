@@ -12,7 +12,7 @@ import sqlite3
 import pymysql
 import config
 from api import *
-version = 'nex1.5'
+version = 'nex1.0'
 
 def getHardDiskNumber():
     c = wmi.WMI()
@@ -155,9 +155,7 @@ def getbalance():
             print('出现异常，如果看不懂请截图发给管理员！')
         time.sleep(5)
         restart()
-def buy_action(symbol,price,amount,t):
-    # amount = str(round(amount,8))
-    # price = str(round(price,8))
+def buy_action(symbol,price,amount,time):
     request_client = RequestClient()
     data = {
         "amount": amount,
@@ -178,17 +176,10 @@ def buy_action(symbol,price,amount,t):
         print(req)
     try:
         print('买单下单成功 价格：', price, '数量：', amount, '订单ID：', req['data']['id'])
-        return True
     except:
-        if 'unavailable' in req['message']:
-            buy_action(symbol, price, amount, t)
-        else:
-            print('买单异常：', req['message'])
-        return False
+        print('买单异常：', req['message'])
 
-def sell_action(symbol,price,amount,t):
-    # amount = str(round(amount, 8))
-    # price = str(round(price, 8))
+def sell_action(symbol,price,amount,time):
     request_client = RequestClient()
     data = {
             "amount": amount,
@@ -209,14 +200,10 @@ def sell_action(symbol,price,amount,t):
         print(req)
     try:
         print('卖单下单成功 价格：',price,'数量：',amount,'订单ID：',req['data']['id'])
-        return True
     except:
+        print('卖单异常：',req['message'])
 
-        if 'unavailable' in req['message']:
-            sell_action(symbol, price, amount, t)
-        else:
-            print('卖单异常：', req['message'])
-        return False
+
 def cancelorders():
     request_client = RequestClient()
     params = {
@@ -237,24 +224,19 @@ def balancecheck():
     aa = getbalance()
     balancex = aa[0]
     balancey = aa[2]
-    time.sleep(2)
     price = getdepth()
     askamount = price[2]
     bidamount = price[3]
     balancey2x = balancey / price[1]
     tonce = int(time.time() * 1000)
     if balancex < balancey2x*0.9:
-        a = buy_action(symbol,price[1],min(round(balancey2x*0.2,4),askamount*0.7),tonce)
-        if a == False:
-            balancecheck()
+        buy_action(symbol,price[1],min(round(balancey2x*0.2,4),askamount*0.7),tonce)
     elif balancey2x < balancex*0.9:
-        a = sell_action(symbol,price[0],min(round(balancex*0.2,4),bidamount*0.7),tonce)
-        if a == False:
-            balancecheck()
+        sell_action(symbol,price[0],min(round(balancex*0.2,4),bidamount*0.7),tonce)
 def go():
-    global amount1, baseprice, f,fee,difficult
+    global amount1, baseprice, f
     aa = getbalance()
-    time.sleep(1)
+    time.sleep(0.5)
     balancex = aa[0]
     balancey = aa[2]
     frozx = aa[4]
@@ -264,9 +246,8 @@ def go():
     askamount = price[3]
     balancey2x = balancey / price[0]
     ss = aa[1] * price[0] + aa[3]
-    print('账户余额：%s: 可用：%s | %s: 可用：%s  (%s) 》》》折合总资产： %s %s 当前版本：V%s' % (
-    x, balancex, y, balancey, num, ss, y, version))
-    print('当前挖矿难度：', difficult, '本小时已挖矿数量：', fee)
+    print('账户余额：%s: 可用：%s 冻结：%s | %s: 可用：%s 冻结： %s (%s) 》》》折合总资产： %s %s 当前版本：V%s' % (
+    x, balancex, frozx, y, balancey, frozy, num, ss, y, version))
     if amount1 == 0 and (f == 0 or baseprice == 0):
         print('当前模式：仓位下单 & 无波动安全区间  当前版本：', version)
     elif amount1 == 0 and f != 0:
@@ -279,7 +260,7 @@ def go():
     if amount1 != 0:
         amount = amount1
     else:
-        amount = round((min(balancex, balancey2x)) * per_amount, 8)
+        amount = round((min(balancex, balancey2x)) * per_amount, 4)
 
     price1 = round((price[0] + price[1]) / 2, price_decimal_digits)
     if baseprice != 0 and f != 0:
@@ -311,9 +292,9 @@ def go():
                     print('**************************************************************************')
             elif price1 != 0 and kissmyass == 1:
                 print('吃单模式')
-                amount0 = round(min(bidamount, askamount) * 0.6, 4)
+                amount1 = round(min(bidamount, askamount) * 0.6, 4)
                 amount2 = round((min(balancex, balancey2x)) * per_amount, 4)
-                amount = min(amount0, amount2)
+                amount = min(amount1, amount2)
                 amount2 = amount
                 tonce = int(time.time() * 1000)
                 t1 = threading.Thread(target=buy_action, args=(symbol, price[1], amount, tonce))
@@ -349,13 +330,13 @@ def go():
                 print('**************************************************************************')
         elif price1 != 0 and kissmyass == 1:
             print('吃单模式')
-            amount0 = round(min(bidamount, askamount) * 0.6, 4)
+            amount1 = round(min(bidamount, askamount) * 0.6, 4)
             amount2 = round((min(balancex, balancey2x)) * per_amount, 4)
-            amount = min(amount0, amount2)
+            amount = min(amount1, amount2)
             amount2 = amount
             tonce = int(time.time() * 1000)
-            t1 = threading.Thread(target=buy_action, args=(symbol, price[1], amount,tonce))
-            t2 = threading.Thread(target=sell_action, args=(symbol2, price[0], amount2,tonce))
+            t1 = threading.Thread(target=buy_action, args=(symbol, price[1], amount))
+            t2 = threading.Thread(target=sell_action, args=(symbol2, price[0], amount2))
             t1.start()
             t2.start()
             t1.join()
@@ -396,18 +377,17 @@ def run():
     # print('大家不要着急嘛，等稳定了咱们再刷可好？')
     # print('')
     #
-    print('*****************************************************************')
-    print('*                           ')
-    print('*     本次更新：             ')
-    print('* 1.调整频率')
+    # print('*****************************************************************')
+    # print('*                           ')
+    # print('*     本次更新：             ')
+    # print('* 1.刷单安全波动区间范围设置')
     # print('* 2.可选固定下单数量设置     ')
     # print('* 以上功能默认关闭，如需开启，请查看config说明进行配置')
-    print('* 5秒后开始刷单....')
-    print('*****************************************************************')
-    time.sleep(5)
+    # print('* 5秒后开始刷单....')
+    # print('*****************************************************************')
+    # time.sleep(5)
     try:
-        checkfinished()
-        time.sleep(1)
+        ini()
         # balancecheck()
         global num,liao
         liao = 0
@@ -420,18 +400,14 @@ def run():
                 # print(e)
                 time.sleep(2.5)
                 run()
-            time.sleep(3)
+            time.sleep(1)
             num = num + 1
-            if num%20 == 0:
+            if num%10 == 0:
                 try:
-                    checkfinished()
                     print('挂单检测....')
-                    time.sleep(1)
                     cancelorders()
                     time.sleep(2)
                     balancecheck()
-                    # time.sleep(2)
-                    # sellcet()
                 except:
                     time.sleep(1)
     except:
@@ -447,126 +423,14 @@ def check():
     else:
         print('请填写注册码！')
         return False
-
-def gethour(t):
-    timestamp = t
-    localtime = time.localtime(timestamp)
-    localtime = time.strftime("%H", localtime)
-    return localtime
-def checkfinished():
-    global fee,difficult
-    fee = 0
-    difficult = 0
-    dealmoney = 0
-    page = 1
-    try:
-        while True:
-            list = order_finished(symbol, page, 50)['data']['data']
-            if list == []:
-                print('查询完成!')
-                isfinished = True
-            for li in list:
-                if gethour(li['create_time']) == gethour(time.time()):
-
-                    dealmoney = dealmoney + float(li['deal_money'])
-                    isfinished = False
-                else:
-                    print('查询完成!')
-                    isfinished = True
-                    break
-
-            page = page + 1
-            print('计算挖矿进度中请稍后，page:',page)
-
-            fee = dealmoney * 0.001
-            tonce = int(time.time() * 1000)
-            baseurl = 'https://api.coinex.com/v1/market/depth?'
-            market_code = 'cet' + y
-            canonical_query = 'access_id=' + access_key + '&market=' + market_code + '&merge=0.00000001&tonce=' + str(tonce)
-            url = baseurl + canonical_query
-            req = requests.request(method='GET', url=url)
-            # print(req.text)
-
-            req = req.json()['data']
-            ask = float(req['asks'][0][0])
-            fee = round(fee / ask,2)
-            difficult = getdifficult()
-
-            while fee >= difficult*0.95:
-                print('本小时额度已满，暂停挖矿，5分钟后再次检查....')
-                time.sleep(300)
-                checkfinished()
-            if isfinished:
-                break
-    except Exception as e:
-        print(e)
-        print('暂无挖矿信息')
-
-    time.sleep(2)
-
-def sellcet():
-    request_client = RequestClient()
-    params = {
-        'market': symbol
-    }
-    req = request_client.request(
-        'GET',
-        '{url}/v1/order/pending'.format(url=request_client.url),
-        params=params
-    )
-    req = json.loads(req.data)
-    orders = req['data']['data']
-    if len(orders) > 0:
-        for li in orders:
-            cancel_order(li['id'], symbol)
-
-    time.sleep(2)
-    tonce = int(time.time() * 1000)
-    baseurl = 'https://api.coinex.com/v1/balance/?'
-    canonical_query = 'access_id=' + access_key + '&tonce=' + str(tonce)
-
-    payload = canonical_query + '&secret_key=' + api_secret
-
-    signature = sign(payload).upper()
-    url = baseurl + canonical_query
-    header = {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
-        'authorization': signature
-    }
-    req = requests.request(method='GET', headers=header, url=url)
-    # print(req.text)
-
-    data = req.json()['data']
-    x = 'cet'
-    availablex = float(data[x.upper()]['available'])
-    lockedx = float(data[x.upper()]['frozen'])
-    balancex = float(availablex) + float(lockedx)
-    if balancex > 20:
-        tonce = int(time.time() * 1000)
-        baseurl = 'https://api.coinex.com/v1/market/depth?'
-        market_code = 'cetusdt'
-        canonical_query = 'access_id=' + access_key + '&market=' + market_code + '&merge=0.00000001&tonce=' + str(tonce)
-        url = baseurl + canonical_query
-        req = requests.request(method='GET', url=url)
-        # print(req.text)
-
-        req = req.json()['data']
-        bid = float(req['bids'][0][0])
-        tonce = int(time.time() * 1000)
-        sell_action('cetusdt',bid,round(balancex*0.95,4),tonce)
-
 if __name__ == '__main__':
     # tonce = int(time.time() * 1000)
     # cancelorders()
     # sell_action(symbol,0.0012559 ,50,tonce)
     # getbalance()
-    # run()
+    run()
     # go()
     # getdepth()
     # balancecheck()
-    # checkfinished()
-    print(order_finished(symbol, 1, 50))
-    # sellcet()
 
 

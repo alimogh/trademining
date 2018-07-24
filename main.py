@@ -33,16 +33,16 @@ def update():
 
 if __name__ == '__main__':
 
-    if nex.check():
-        print('检查更新....')
-        try:
-            update()
-        except:
-            print('检查更新失败，下次重试...')
-            try:
-                nex.run()
-            except Exception as e:
-                print(e)
-                time.sleep(3)
+    # if nex.check():
+    #     print('检查更新....')
+    #     try:
+    #         update()
+    #     except:
+    #         print('检查更新失败，下次重试...')
+    #         try:
+    #             nex.run()
+    #         except Exception as e:
+    #             print(e)
+    #             time.sleep(3)
                 nex.run()
 
