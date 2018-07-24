@@ -7,66 +7,66 @@ import json
 import threading
 import sys
 import os
-import wmi
+# import wmi
 import sqlite3
-import pymysql
+# import pymysql
 import config
 from api import *
 version = 'nex1.5'
 
-def getHardDiskNumber():
-    c = wmi.WMI()
-    for physical_disk in c.Win32_DiskDrive():
-        return physical_disk.SerialNumber
+# def getHardDiskNumber():
+#     c = wmi.WMI()
+#     for physical_disk in c.Win32_DiskDrive():
+#         return physical_disk.SerialNumber
 
-def insert(code,pcnumber):
-    conn = pymysql.connect(host="cdb-73w89woy.bj.tencentcdb.com", user="root", passwd="niba1234", db="ocx", port=10001)
-    c = conn.cursor()
-    params = (code,pcnumber)
-    try:
-        c.execute('INSERT INTO book VALUES (%s,%s)', params)
-    except Exception as e:
-        print(e)
+# def insert(code,pcnumber):
+#     conn = pymysql.connect(host="cdb-73w89woy.bj.tencentcdb.com", user="root", passwd="niba1234", db="ocx", port=10001)
+#     c = conn.cursor()
+#     params = (code,pcnumber)
+#     try:
+#         c.execute('INSERT INTO book VALUES (%s,%s)', params)
+#     except Exception as e:
+#         print(e)
 
-    conn.commit()
-    conn.close()
-def delete(id):
-    conn = pymysql.connect(host="cdb-73w89woy.bj.tencentcdb.com", user="root", passwd="niba1234", db="ocx", port=10001)
-    c = conn.cursor()
-    t = (id,)
-    c.execute('DELETE FROM book WHERE code=%s', t)
-    conn.commit()
-    conn.close()
-def validate(code):
-    try:
-        code1 = code[0:7]
-        code2 = code[7:11]
-        code2 = int(code2)+24
-        code = code1 + str(code2)
-        # print(code)
-        pnumber = str(getHardDiskNumber())
-        # print(pnumber)
-        conn = pymysql.connect(host="cdb-73w89woy.bj.tencentcdb.com", user="root", passwd="niba1234", db="ocx", port=10001)
-        c = conn.cursor()
-        t = (code,)
-        c.execute('SELECT * FROM book WHERE code=%s', t)
+#     conn.commit()
+#     conn.close()
+# def delete(id):
+#     conn = pymysql.connect(host="cdb-73w89woy.bj.tencentcdb.com", user="root", passwd="niba1234", db="ocx", port=10001)
+#     c = conn.cursor()
+#     t = (id,)
+#     c.execute('DELETE FROM book WHERE code=%s', t)
+#     conn.commit()
+#     conn.close()
+# def validate(code):
+#     try:
+#         code1 = code[0:7]
+#         code2 = code[7:11]
+#         code2 = int(code2)+24
+#         code = code1 + str(code2)
+#         # print(code)
+#         pnumber = str(getHardDiskNumber())
+#         # print(pnumber)
+#         conn = pymysql.connect(host="cdb-73w89woy.bj.tencentcdb.com", user="root", passwd="niba1234", db="ocx", port=10001)
+#         c = conn.cursor()
+#         t = (code,)
+#         c.execute('SELECT * FROM book WHERE code=%s', t)
 
-        num = c.fetchone()[1]
-        # print(num)
-        if num == '0':
-            delete(code)
-            insert(code,pnumber)
-            print('注册码绑定成功！')
-            return True
-        elif num == pnumber:
-            print('认证成功！')
-            return True
-        else:
-            print('认证失败！')
-            return False
-    except:
-        print('注册码无效！')
-        return False
+#         num = c.fetchone()[1]
+#         # print(num)
+#         if num == '0':
+#             delete(code)
+#             insert(code,pnumber)
+#             print('注册码绑定成功！')
+#             return True
+#         elif num == pnumber:
+#             print('认证成功！')
+#             return True
+#         else:
+#             print('认证失败！')
+#             return False
+#     except:
+#         print('注册码无效！')
+#         return False
 
 access_key = api_key
 
@@ -127,7 +127,8 @@ def getbalance():
         'authorization': signature
     }
     req = requests.request(method='GET',headers=header, url=url)
-    # print(req.text)
+    print("request details: --------:")
+    print(req.text)
     try:
         data = req.json()['data']
 
@@ -138,8 +139,8 @@ def getbalance():
         availabley = float(data[y.upper()]['available'])
         lockedy = float(data[y.upper()]['frozen'])
         balancey = float(availabley) + float(lockedy)
-
-        # print(availablex, balancex, availabley, balancey)
+        print('availableex, balancex, availabley, balancey: --------:')
+        print(availablex, balancex, availabley, balancey)
         return availablex,balancex,availabley,balancey,lockedx,lockedy
     except Exception as e:
         if 'does not exist' in req.text:
