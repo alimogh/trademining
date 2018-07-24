@@ -4,7 +4,7 @@
 pip install requests
 pip install wmi
 pip install pymysql
-pip install pywin32
+REM pip install pywin32 //for windows only
 
 exit
 
