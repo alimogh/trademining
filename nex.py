@@ -433,7 +433,12 @@ def run():
                 print(e)
                 time.sleep(2.5)
                 run()
-            time.sleep(0.5)
+
+            if num < 4:
+                time.sleep(0.1)
+            else:
+                time.sleep(5)
+
             num = num + 1
             if num%10 == 0:
                 try:
@@ -441,7 +446,7 @@ def run():
                     print('List Check....')
                     time.sleep(1)
                     cancelorders()
-                    time.sleep(10)
+                    time.sleep(5)
                     balancecheck()
                     # time.sleep(2)
                     # sellcet()
