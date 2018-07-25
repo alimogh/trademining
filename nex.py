@@ -506,7 +506,7 @@ def checkfinished():
 
             while fee >= difficult*0.95:
                 print('Full in this hour, recheck in 1 minute ....')
-                time.sleep(60)
+                time.sleep(60*5)
                 checkfinished()
             if isfinished:
                 break
