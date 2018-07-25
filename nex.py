@@ -260,7 +260,6 @@ def balancecheck():
             print('balancing sell order success.')
         if a == False:
             print('balancing sell fail...try again')
-            time.sleep(3)
             balancecheck()
         # elif print ('balancing is ok now.')
 def go():
@@ -429,7 +428,7 @@ def run():
             try:
                 go()
             except Exception as e:
-                # print(e)
+                print(e)
                 time.sleep(2.5)
                 run()
             time.sleep(0.5)
