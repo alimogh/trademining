@@ -240,7 +240,7 @@ def balancecheck():
     aa = getbalance()
     balancex = aa[0]
     balancey = aa[2]
-    time.sleep(2)
+    time.sleep(3)
     price = getdepth()
     askamount = price[2]
     bidamount = price[3]
@@ -249,14 +249,14 @@ def balancecheck():
     if balancex < balancey2x*0.9:
         a = buy_action(symbol,price[1],min(round(balancey2x*0.2,4),askamount*0.7),tonce)
         if a == False:
-            print('balancing fail...try again')
+            print('balancing buy fail...try again')
             balancecheck()
        # elif print('balancing is ok now.')
     elif balancey2x < balancex*0.9:
         a = sell_action(symbol,price[0],min(round(balancex*0.2,4),bidamount*0.7),tonce)
         if a == False:
-            print('balancing fail...try again')
-            time.sleep(3)
+            print('balancing sell fail...try again')
+            #time.sleep(3)
             balancecheck()
         # elif print ('balancing is ok now.')
 def go():
