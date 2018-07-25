@@ -74,6 +74,8 @@ symbol = coin[0] + coin[1]
 x = coin[0]
 y = coin[1]
 
+errors = ['API error. Check config or API accessing in platform','adjust time，match UTC +8 hours','wrong trade pair, all smallcaps. eg cetbch','error, screentshot to admin']
+
 def sign(x):
 
     x = x.encode('utf-8')
@@ -95,20 +97,20 @@ def getdepth():
         bid = float(req['bids'][0][0])
         askamount = float(req['asks'][0][1])
         bidamount = float(req['bids'][0][1])
-        print('买一：',bid,'卖一',ask)
+        print('buy1',bid,'sell1',ask)
         return bid,ask,askamount,bidamount
     except Exception as e:
         if 'does not exist' in req.text:
             print(req.text)
-            print('API错误，请检查config配置是否正确，或登录平台查看API是否健在~~')
+            print(errors[0])
         elif 'The tonce' in req.text:
-            print('请调整电脑时间，与北京时间相差不超过5秒！')
+            print(errors[1])
         elif 'market_code' in req.text:
-            print('交易对填写错误，交易货币在前，基础货币在后，全部小写')
+            print(errors[2])
         else:
             print(req.text)
             print(e)
-            print('出现异常，如果看不懂请截图发给管理员！')
+            print(errors[3])
         time.sleep(5)
         restart()
 
@@ -145,15 +147,15 @@ def getbalance():
     except Exception as e:
         if 'does not exist' in req.text:
             print(req.text)
-            print('API错误，请检查config配置是否正确，或登录平台查看API是否健在~~')
+            print(errors[0])
         elif 'The tonce' in req.text:
-            print('请调整电脑时间，与北京时间相差不超过5秒！')
+            print(errors[1])
         elif 'market_code' in req.text:
-            print('交易对填写错误，交易货币在前，基础货币在后，全部小写')
+            print(errors[2])
         else:
             print(req.text)
             print(e)
-            print('出现异常，如果看不懂请截图发给管理员！')
+            print(errors[3])
         time.sleep(5)
         restart()
 def buy_action(symbol,price,amount,t):
@@ -178,13 +180,13 @@ def buy_action(symbol,price,amount,t):
     except:
         print(req)
     try:
-        print('买单下单成功 价格：', price, '数量：', amount, '订单ID：', req['data']['id'])
+        print('success buyorder price: ', price, 'amount: ', amount, 'orderID: ', req['data']['id'])
         return True
     except:
         if 'unavailable' in req['message']:
             buy_action(symbol, price, amount, t)
         else:
-            print('买单异常：', req['message'])
+            print('buy order issue: ', req['message'])
         return False
 
 def sell_action(symbol,price,amount,t):
@@ -209,14 +211,14 @@ def sell_action(symbol,price,amount,t):
     except:
         print(req)
     try:
-        print('卖单下单成功 价格：',price,'数量：',amount,'订单ID：',req['data']['id'])
+        print('sucess sellorder Price: ',price,'amount: ',amount,'orderID: ',req['data']['id'])
         return True
     except:
 
         if 'unavailable' in req['message']:
             sell_action(symbol, price, amount, t)
         else:
-            print('卖单异常：', req['message'])
+            print('Sell order issue: ', req['message'])
         return False
 def cancelorders():
     request_client = RequestClient()
@@ -234,7 +236,7 @@ def cancelorders():
         for li in orders:
             cancel_order(li['id'],symbol)
 def balancecheck():
-    print('余额动平衡....')
+    print('balancing...')
     aa = getbalance()
     balancex = aa[0]
     balancey = aa[2]
@@ -255,7 +257,7 @@ def balancecheck():
 def go():
     global amount1, baseprice, f,fee,difficult
     aa = getbalance()
-    time.sleep(1)
+    time.sleep(0.1)
     balancex = aa[0]
     balancey = aa[2]
     frozx = aa[4]
@@ -265,17 +267,17 @@ def go():
     askamount = price[3]
     balancey2x = balancey / price[0]
     ss = aa[1] * price[0] + aa[3]
-    print('账户余额：%s: 可用：%s | %s: 可用：%s  (%s) 》》》折合总资产： %s %s 当前版本：V%s' % (
+    print('left %s: available: %s | %s: available: %s  (%s) -- refer asset %s %s CurrentVer：V%s' % (
     x, balancex, y, balancey, num, ss, y, version))
-    print('当前挖矿难度：', difficult, '本小时已挖矿数量：', fee)
+    print('current Diff: ', difficult, 'Minted this hour: ', fee)
     if amount1 == 0 and (f == 0 or baseprice == 0):
-        print('当前模式：仓位下单 & 无波动安全区间  当前版本：', version)
+        print('Mode: Percentage Ordering & no wave currentVer: ', version)
     elif amount1 == 0 and f != 0:
-        print('当前模式：仓位下单 & 安全区间(', f, '%', ')', '当前版本：', version)
+        print('Mode: Percentage Ordering & wave range (', f, '%', ')', 'CurVersion', version)
     elif amount1 != 0 and (f == 0 or baseprice == 0):
-        print('当前模式：固定下单数量（%s）& 无波动安全区间 当前版本：%s' % (amount1, version))
+        print('Mode: Fixed amt: (%s) & no wave currentVer: %s' % (amount1, version))
     else:
-        print('当前模式：固定下单数量（', amount1, ')', ' & ', '安全区间(', f, '%', ')', '当前版本：', version)
+        print('Mode: Fixed amt: (', amount1, ')', ' & ', 'Wave range (', f, '%', ')', 'CurVersion', version)
 
     if amount1 != 0:
         amount = amount1
@@ -289,10 +291,10 @@ def go():
         bb = abs((baseprice - price[0]) / baseprice)
         ff = round(max(aa, bb), 8)
         if ff > (f / 100):
-            print('当前价格波动： %s 超出预设安全波动区间，暂停刷单' % ff)
+            print('current wave  %s over wave range setting，pause' % ff)
             time.sleep(5)
         else:
-            print('当前价格波动：%s' % ff)
+            print('current wave %s' % ff)
             price2 = price1
             amount2 = amount
             symbol2 = symbol
@@ -307,7 +309,7 @@ def go():
                     print('**************************************************************************')
 
                 else:
-                    print('余额不足...')
+                    print('no enough balance...')
                     # balancecheck()
                     print('**************************************************************************')
             elif price1 != 0 and kissmyass == 1:
@@ -326,7 +328,7 @@ def go():
                 print('**************************************************************************')
             else:
 
-                print('盘口价格差过低，放弃下单')
+                print('wave limited，no put order')
                 print('**************************************************************************')
     else:
         price2 = price1
@@ -345,7 +347,7 @@ def go():
                 print('**************************************************************************')
 
             else:
-                print('余额不足...')
+                print('no balance...')
                 # balancecheck()
                 print('**************************************************************************')
         elif price1 != 0 and kissmyass == 1:
@@ -364,7 +366,7 @@ def go():
             print('**************************************************************************')
         else:
 
-            print('盘口价格差过低，放弃下单')
+            print('price diff too low, no order put...')
             print('**************************************************************************')
 def restart():
     python = sys.executable
@@ -399,17 +401,17 @@ def run():
     #
     print('*****************************************************************')
     print('*                           ')
-    print('*     本次更新：             ')
-    print('* 1.调整频率')
-    # print('* 2.可选固定下单数量设置     ')
-    # print('* 以上功能默认关闭，如需开启，请查看config说明进行配置')
-    print('* 5秒后开始刷单....')
+    # print('* 本次更新：             ')
+    # print('* 1.调整频率')
+    # # print('* 2.可选固定下单数量设置     ')
+    # # print('* 以上功能默认关闭，如需开启，请查看config说明进行配置')
+    print('* Start in 5 Seconds....')
     print('*****************************************************************')
     time.sleep(5)
     try:
         checkfinished()
         time.sleep(1)
-        # balancecheck()
+        balancecheck()
         global num,liao
         liao = 0
         num = 0
@@ -421,12 +423,12 @@ def run():
                 # print(e)
                 time.sleep(2.5)
                 run()
-            time.sleep(3)
+            time.sleep(0.5)
             num = num + 1
-            if num%20 == 0:
+            if num%10 == 0:
                 try:
                     checkfinished()
-                    print('挂单检测....')
+                    print(List Check....')
                     time.sleep(1)
                     cancelorders()
                     time.sleep(2)
@@ -465,7 +467,7 @@ def checkfinished():
         while True:
             list = order_finished(symbol, page, 50)['data']['data']
             if list == []:
-                print('查询完成!')
+                print('Finished Query!')
                 isfinished = True
             for li in list:
                 if gethour(li['create_time']) == gethour(time.time()):
@@ -473,12 +475,12 @@ def checkfinished():
                     dealmoney = dealmoney + float(li['deal_money'])
                     isfinished = False
                 else:
-                    print('查询完成!')
+                    print('Finished query!')
                     isfinished = True
                     break
 
             page = page + 1
-            print('计算挖矿进度中请稍后，page:',page)
+            print('Calculate mining processing status，page:',page)
 
             fee = dealmoney * 0.001
             tonce = int(time.time() * 1000)
@@ -495,16 +497,16 @@ def checkfinished():
             difficult = getdifficult()
 
             while fee >= difficult*0.95:
-                print('本小时额度已满，暂停挖矿，5分钟后再次检查....')
-                time.sleep(300)
+                print('Full in this hour, recheck in 1 minute ....')
+                time.sleep(60)
                 checkfinished()
             if isfinished:
                 break
     except Exception as e:
         print(e)
-        print('暂无挖矿信息')
+        print('no mining data')
 
-    time.sleep(2)
+    time.sleep(0.5)
 
 def sellcet():
     request_client = RequestClient()
@@ -547,7 +549,7 @@ def sellcet():
     if balancex > 20:
         tonce = int(time.time() * 1000)
         baseurl = 'https://api.coinex.com/v1/market/depth?'
-        market_code = 'cetusdt'
+        market_code = 'cetbch'
         canonical_query = 'access_id=' + access_key + '&market=' + market_code + '&merge=0.00000001&tonce=' + str(tonce)
         url = baseurl + canonical_query
         req = requests.request(method='GET', url=url)
@@ -556,7 +558,7 @@ def sellcet():
         req = req.json()['data']
         bid = float(req['bids'][0][0])
         tonce = int(time.time() * 1000)
-        sell_action('cetusdt',bid,round(balancex*0.95,4),tonce)
+        sell_action('cetbch',bid,round(balancex*0.95,4),tonce)
 
 if __name__ == '__main__':
     # tonce = int(time.time() * 1000)
