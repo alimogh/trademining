@@ -248,12 +248,16 @@ def balancecheck():
     tonce = int(time.time() * 1000)
     if balancex < balancey2x*0.9:
         a = buy_action(symbol,price[1],min(round(balancey2x*0.2,4),askamount*0.7),tonce)
+        if a == True:
+            print('balancing buy order sucess.')
         if a == False:
             print('balancing buy fail...try again')
             balancecheck()
        # elif print('balancing is ok now.')
     elif balancey2x < balancex*0.9:
         a = sell_action(symbol,price[0],min(round(balancex*0.2,4),bidamount*0.7),tonce)
+        if a == True:
+            print('balancing sell order success.')
         if a == False:
             print('balancing sell fail...try again')
             #time.sleep(3)
