@@ -247,6 +247,7 @@ def balancecheck():
     balancey2x = balancey / price[1]
     tonce = int(time.time() * 1000)
     if balancex < balancey2x*0.9:
+        print('balancex: %s | balance2x*0.9: %s | min(round(balancey2x*0.2,4): %s | askamount*0.7: %s' %(balancex, balancey2x*0.9,round(balancey2x*0.2,4), askamount*0.7))
         a = buy_action(symbol,price[1],min(round(balancey2x*0.2,4),askamount*0.7),tonce)
         if a == True:
             print('balancing buy order sucess.')
@@ -255,6 +256,7 @@ def balancecheck():
             balancecheck()
        # elif print('balancing is ok now.')
     elif balancey2x < balancex*0.9:
+        print('balancey2x: %s | balancex*0.9: %s | min(round(balancey2x*0.2,4): %s | askamount*0.7: %s' %(balancey2x, balancex*0.9,round(balancex*0.2,4), bidamount*0.7))
         a = sell_action(symbol,price[0],min(round(balancex*0.2,4),bidamount*0.7),tonce)
         if a == True:
             print('balancing sell order success.')
@@ -415,10 +417,10 @@ def run():
     # # print('* 以上功能默认关闭，如需开启，请查看config说明进行配置')
     print('* Start in 5 Seconds....')
     print('*****************************************************************')
-    time.sleep(2)
+    #time.sleep(2)
     try:
         checkfinished()
-        time.sleep(5)
+        time.sleep(8)
         balancecheck()
         global num,liao
         liao = 0
@@ -439,7 +441,7 @@ def run():
                     print('List Check....')
                     time.sleep(1)
                     cancelorders()
-                    time.sleep(2)
+                    time.sleep(8)
                     balancecheck()
                     # time.sleep(2)
                     # sellcet()
@@ -505,7 +507,7 @@ def checkfinished():
             difficult = getdifficult()
 
             while fee >= difficult*0.95:
-                print('Full in this hour, recheck in 1 minute ....')
+                print('Full in this hour, recheck in 5 minute ....')
                 time.sleep(60*5)
                 checkfinished()
             if isfinished:
