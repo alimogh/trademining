@@ -250,12 +250,16 @@ def balancecheck():
         a = buy_action(symbol,price[1],min(round(balancey2x*0.2,4),askamount*0.7),int(time.time() * 1000))
         if a == False:
             print('balancing fail...try again')
+            time.sleep(3)
             balancecheck()
+        elif print('balancing is ok now.')
     elif balancey2x < balancex*0.9:
         a = sell_action(symbol,price[0],min(round(balancex*0.2,4),bidamount*0.7),int(time.time() * 1000))
         if a == False:
             print('balancing fail...try again')
+            time.sleep(3)
             balancecheck()
+        elif print ('balancing is ok now.')
 def go():
     global amount1, baseprice, f,fee,difficult
     aa = getbalance()
@@ -409,10 +413,10 @@ def run():
     # # print('* 以上功能默认关闭，如需开启，请查看config说明进行配置')
     print('* Start in 5 Seconds....')
     print('*****************************************************************')
-    time.sleep(5)
+    time.sleep(2)
     try:
         checkfinished()
-        time.sleep(1)
+        time.sleep(5)
         balancecheck()
         global num,liao
         liao = 0
