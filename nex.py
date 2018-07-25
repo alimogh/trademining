@@ -180,7 +180,7 @@ def buy_action(symbol,price,amount,t):
     except:
         print(req)
     try:
-        print('success buyorder price: ', price, 'amount: ', amount, 'orderID: ', req['data']['id'])
+        print('success balance buy price: ', price, 'amount: ', amount, 'orderID: ', req['data']['id'])
         return True
     except:
         if 'unavailable' in req['message']:
@@ -211,7 +211,7 @@ def sell_action(symbol,price,amount,t):
     except:
         print(req)
     try:
-        print('sucess sellorder Price: ',price,'amount: ',amount,'orderID: ',req['data']['id'])
+        print('sucess balance sell Price: ', price,'amount: ',amount,'orderID: ',req['data']['id'])
         return True
     except:
 
@@ -428,7 +428,7 @@ def run():
             if num%10 == 0:
                 try:
                     checkfinished()
-                    print(List Check....')
+                    print('List Check....')
                     time.sleep(1)
                     cancelorders()
                     time.sleep(2)
