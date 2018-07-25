@@ -245,14 +245,14 @@ def balancecheck():
     askamount = price[2]
     bidamount = price[3]
     balancey2x = balancey / price[1]
-    tonce = int(time.time() * 1000)
+    # tonce = int(time.time() * 1000)
     if balancex < balancey2x*0.9:
-        a = buy_action(symbol,price[1],min(round(balancey2x*0.2,4),askamount*0.7),tonce)
+        a = buy_action(symbol,price[1],min(round(balancey2x*0.2,4),askamount*0.7),int(time.time() * 1000))
         if a == False:
             print('balancing fail...try again')
             balancecheck()
     elif balancey2x < balancex*0.9:
-        a = sell_action(symbol,price[0],min(round(balancex*0.2,4),bidamount*0.7),tonce)
+        a = sell_action(symbol,price[0],min(round(balancex*0.2,4),bidamount*0.7),int(time.time() * 1000))
         if a == False:
             print('balancing fail...try again')
             balancecheck()
