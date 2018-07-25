@@ -1,33 +1,33 @@
 
-# 平台账户中心申请api填入
-# miaomiao
-api_key = '填这里'
-api_secret = '填这里'
+# Prepare ex api
+# 
+api_key = 'xxx'
+api_secret = 'xxx'
 
-#注册码
+#reg code
 validationcode = ''
 
-# 交易对
+# trade pair
 coin = ['cet','bch']
-# 每次下单仓位比
+# bid percentage ea
 per_amount = 0.6
-# 所选择交易对价格精度（小数点后几位数）
+# money/goods decimal 8 digits in general
 price_decimal_digits = 8
 
 
-#baseprice为安全波动范围的基准价，f为波动幅度（1-10之间取值，代表上线波动几个点，大于这个范围停止刷单）
+#baseprice is safe waving base price. f is waving deepth (1-10, 1 means 1 point above baseprice. if over f, eg 10, stop mining)
 baseprice = 0
 f = 0
 
-#amount1为固定下单数量（交易对前面那个币的数量），如果设置固定下单，那百分比下单则无效
+#amount1 fixed to place of goods, if no zero, percentage mode ignore
 amount1 = 1056.7
 
-# 疯狂模式！！！！
-# 是否启用盘口无差价时吃单模式（有亏损）,0不启用，1启用
+# crazy mode
+# regardless diff buy1 and sell 1 diff(may loss),0 disable，1 active
 kissmyass = 0
 
 
-# 保留参数
+# reserviced
 rst1 = 0
 rst2 = 0
 rst3 = 0
