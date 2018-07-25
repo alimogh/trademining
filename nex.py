@@ -441,7 +441,7 @@ def run():
                     print('List Check....')
                     time.sleep(1)
                     cancelorders()
-                    time.sleep(8)
+                    time.sleep(10)
                     balancecheck()
                     # time.sleep(2)
                     # sellcet()
