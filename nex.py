@@ -240,7 +240,7 @@ def balancecheck():
     aa = getbalance()
     balancex = aa[0]
     balancey = aa[2]
-    time.sleep(3)
+    time.sleep()
     price = getdepth()
     askamount = price[2]
     bidamount = price[3]
@@ -260,7 +260,7 @@ def balancecheck():
             print('balancing sell order success.')
         if a == False:
             print('balancing sell fail...try again')
-            #time.sleep(3)
+            time.sleep(3)
             balancecheck()
         # elif print ('balancing is ok now.')
 def go():
