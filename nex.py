@@ -180,7 +180,7 @@ def buy_action(symbol,price,amount,t):
     except:
         print(req)
     try:
-        print('success balance buy price: ', price, 'amount: ', amount, 'orderID: ', req['data']['id'])
+        print('success buyorder price: ', price, 'amount: ', amount, 'orderID: ', req['data']['id'])
         return True
     except:
         if 'unavailable' in req['message']:
@@ -211,7 +211,7 @@ def sell_action(symbol,price,amount,t):
     except:
         print(req)
     try:
-        print('sucess balance sell Price: ', price,'amount: ',amount,'orderID: ',req['data']['id'])
+        print('sucess sellorder Price: ',price,'amount: ',amount,'orderID: ',req['data']['id'])
         return True
     except:
 
@@ -249,10 +249,12 @@ def balancecheck():
     if balancex < balancey2x*0.9:
         a = buy_action(symbol,price[1],min(round(balancey2x*0.2,4),askamount*0.7),tonce)
         if a == False:
+            print('balancing fail...try again')
             balancecheck()
     elif balancey2x < balancex*0.9:
         a = sell_action(symbol,price[0],min(round(balancex*0.2,4),bidamount*0.7),tonce)
         if a == False:
+            print('balancing fail...try again')
             balancecheck()
 def go():
     global amount1, baseprice, f,fee,difficult
