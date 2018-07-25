@@ -240,7 +240,7 @@ def balancecheck():
     aa = getbalance()
     balancex = aa[0]
     balancey = aa[2]
-    time.sleep()
+    time.sleep(5)
     price = getdepth()
     askamount = price[2]
     bidamount = price[3]
