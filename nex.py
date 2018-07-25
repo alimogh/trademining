@@ -245,21 +245,20 @@ def balancecheck():
     askamount = price[2]
     bidamount = price[3]
     balancey2x = balancey / price[1]
-    # tonce = int(time.time() * 1000)
+    tonce = int(time.time() * 1000)
     if balancex < balancey2x*0.9:
-        a = buy_action(symbol,price[1],min(round(balancey2x*0.2,4),askamount*0.7),int(time.time() * 1000))
+        a = buy_action(symbol,price[1],min(round(balancey2x*0.2,4),askamount*0.7),tonce)
         if a == False:
             print('balancing fail...try again')
-            time.sleep(3)
             balancecheck()
-        elif print('balancing is ok now.')
+       # elif print('balancing is ok now.')
     elif balancey2x < balancex*0.9:
-        a = sell_action(symbol,price[0],min(round(balancex*0.2,4),bidamount*0.7),int(time.time() * 1000))
+        a = sell_action(symbol,price[0],min(round(balancex*0.2,4),bidamount*0.7),tonce)
         if a == False:
             print('balancing fail...try again')
             time.sleep(3)
             balancecheck()
-        elif print ('balancing is ok now.')
+        # elif print ('balancing is ok now.')
 def go():
     global amount1, baseprice, f,fee,difficult
     aa = getbalance()
@@ -405,8 +404,8 @@ def run():
     # print('大家不要着急嘛，等稳定了咱们再刷可好？')
     # print('')
     #
-    print('*****************************************************************')
-    print('*                           ')
+    # print('*****************************************************************')
+    # print('*                           ')
     # print('* 本次更新：             ')
     # print('* 1.调整频率')
     # # print('* 2.可选固定下单数量设置     ')
