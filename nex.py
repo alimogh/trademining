@@ -435,9 +435,9 @@ def run():
                 run()
 
             if num < 4:
-                time.sleep(0.1)
+                time.sleep(0.01)
             else:
-                time.sleep(5)
+                time.sleep(3)
 
             num = num + 1
             if num%10 == 0:
