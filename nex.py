@@ -419,7 +419,7 @@ def run():
     print('*****************************************************************')
     #time.sleep(2)
     try:
-        # checkfinished()
+        checkfinished()
         # time.sleep(8)
         balancecheck()
         global num,liao
